@@ -1,0 +1,15 @@
+python-dotenv
+requests
+numpy
+pillow
+opencv-python
+rapidocr-onnxruntime
+torch
+transformers
+langchain
+langchain-openai
+langgraph
+typing_extensions
+llama-index-core
+llama-index-llms-openai
+llama-index-tools-tavily-research
