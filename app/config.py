@@ -3,50 +3,58 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
+# --- always load .env locally; harmless on Streamlit ---
+load_dotenv()
 
-# try to read from streamlit secrets when running on Streamlit Cloud
-def _get_secret(name: str, default: str | None = None):
+# Try to read from Streamlit secrets when running on Streamlit Cloud
+def _from_secrets(name: str, default: str | None = None) -> str | None:
     try:
-        import streamlit as st
-        if "secrets" in dir(st) and name in st.secrets:
+        import streamlit as st  # present on Cloud
+        if hasattr(st, "secrets") and name in st.secrets:
             return st.secrets[name]
     except Exception:
-        # Load .env once here so everything downstream sees the env vars
-        load_dotenv()
+        pass
+    return default
 
-        # ----- API KEYS & MODEL -----
-        OPENAI_API_KEY  = os.getenv("OPENAI_API_KEY", "")
-        TAVILY_API_KEY  = os.getenv("TAVILY_API_KEY", "")
-        OPENAI_MODEL    = os.getenv("OPENAI_MODEL", "gpt-4o-mini")  # default if not set
-
-        if not OPENAI_API_KEY:
-            # Fail fast with a clear message; you can relax this if you prefer warnings
-            raise RuntimeError(
-                "OPENAI_API_KEY is not set. Add it to your .env at repo root, e.g.\n"
-                "OPENAI_API_KEY=sk-...\n"
-                "TAVILY_API_KEY=tvly-...   # optional, only for tavily tool"
-            )
+def get_secret(name: str, default: str | None = None) -> str | None:
+    # priority: Streamlit secrets -> env var -> default
+    v = _from_secrets(name)
+    if v is not None:
+        return v
     return os.getenv(name, default)
 
+# ----- API KEYS & MODEL -----
+OPENAI_API_KEY = get_secret("OPENAI_API_KEY", "")
+TAVILY_API_KEY = get_secret("TAVILY_API_KEY", "")
+OPENAI_MODEL   = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 
+if not OPENAI_API_KEY:
+    raise RuntimeError(
+        "OPENAI_API_KEY is not set. Provide it via Streamlit secrets or your local .env."
+    )
 
 # ----- PATHS -----
-# repo/
-#   .env
-#   requirements.txt
-#   main.py
-#   app/
-#     ...
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
-# RAG lives under app/rag/
-RAG_DIR          = REPO_ROOT / "app" / "rag"
-DOC_DIR          = Path(os.getenv("RAG_DIR", RAG_DIR / "rag_storage")).resolve()
-INDEX_DIR        = Path(os.getenv("INDEX_DIR",  RAG_DIR / "index_store")).resolve()
+# Choose a writable base dir:
+# - Streamlit Cloud: /mount/data
+# - Local: <repo>/data
+IS_STREAMLIT = "STREAMLIT_RUNTIME" in os.environ
+DEFAULT_DATA_BASE = Path("/mount/data") if IS_STREAMLIT else (REPO_ROOT / "data")
 
-# Outputs (keep inside repo by default)
-OUTPUT_DIR       = Path(os.getenv("OUTPUT_DIR", REPO_ROOT / "outputs")).resolve()
+# Allow override via secrets or env
+DATA_BASE = Path(
+    _from_secrets("DATA_BASE", os.getenv("DATA_BASE", str(DEFAULT_DATA_BASE)))
+).resolve()
 
-# Ensure directories exist
-for p in (DOC_DIR, INDEX_DIR, OUTPUT_DIR):
+# RAG dirs live under the writable base (NOT inside the repo tree on Cloud)
+RAG_DIR   = DATA_BASE / "rag"
+DOC_DIR   = Path(get_secret("RAG_STORAGE_DIR", str(RAG_DIR / "rag_storage"))).resolve()
+INDEX_DIR = Path(get_secret("INDEX_STORE_DIR",  str(RAG_DIR / "index_store"))).resolve()
+
+# Where we save annotated images, etc.
+OUTPUT_DIR = Path(os.getenv("OUTPUT_DIR", str(DATA_BASE / "outputs"))).resolve()
+
+# Ensure directories exist (writable on Cloud)
+for p in (RAG_DIR, DOC_DIR, INDEX_DIR, OUTPUT_DIR):
     p.mkdir(parents=True, exist_ok=True)
