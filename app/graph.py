@@ -1,5 +1,5 @@
 # app/graph.py
-from typing import Annotated, Sequence, TypedDict
+from typing import Annotated, Sequence, TypedDict, NotRequired
 import operator
 from langgraph.graph import StateGraph, START, END
 from langchain_openai import ChatOpenAI
@@ -8,9 +8,12 @@ from app.config import OPENAI_API_KEY, OPENAI_MODEL
 from app.rag.indexer import QUERY_ENGINE
 from app.tools import tavily_search, ocr, obj_detect
 from app.utils import extract_user_text
+from langgraph.checkpoint.memory import MemorySaver
+from typing_extensions import TypedDict
 
 class State(TypedDict):
     messages: Annotated[Sequence[BaseMessage], operator.add]
+    output: NotRequired[str]
 
 def _llm_with_tools():
     llm = ChatOpenAI(model=OPENAI_MODEL, api_key=OPENAI_API_KEY)
@@ -67,8 +70,11 @@ def build_graph():
     builder.add_edge("rag", "agent")
     builder.add_conditional_edges("agent", should_continue, {"tools": "tools", END: END})
     builder.add_edge("tools", "agent")
-    graph = builder.compile()
+    
+    memory = MemorySaver()
+    graph = builder.compile(checkpointer=memory)
 
+    # You can keep returning a system message from here if you prefer:
     system_msg = SystemMessage(
         content=(
             "You are a text-only assistant with access to tools.\n"
@@ -82,5 +88,7 @@ def build_graph():
             "If ocr is called, prefer sensible English tokens; ignore gibberish.\n"
         )
     )
+
+    # IMPORTANT: keep the same thread_id across turns to reuse memory.
     config = {"configurable": {"thread_id": "run-1"}}
     return graph, config, system_msg
