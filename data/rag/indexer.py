@@ -5,7 +5,7 @@ from typing import Dict, Any, List
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, Document
 from llama_index.core import StorageContext, load_index_from_storage
 from llama_index.core.node_parser import SentenceSplitter
-from ..config import RAG_DIR, INDEX_DIR
+from app.config import RAG_DIR, INDEX_DIR
 
 MANIFEST_NAME = "manifest.json"
 

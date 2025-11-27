@@ -5,7 +5,7 @@ from langgraph.graph import StateGraph, START, END
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import BaseMessage, SystemMessage, ToolMessage
 from app.config import OPENAI_API_KEY, OPENAI_MODEL
-from app.rag.indexer import QUERY_ENGINE
+from data.rag.indexer import QUERY_ENGINE
 from app.tools import tavily_search, ocr, obj_detect
 from app.utils import extract_user_text
 from langgraph.checkpoint.memory import MemorySaver

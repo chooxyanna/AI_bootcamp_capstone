@@ -1,32 +1,32 @@
 {
   "snapshot": {
     "indexer.py": {
-      "size": 4217,
-      "mtime": 1764174357
+      "size": 4219,
+      "mtime": 1764225201
     },
     "__init__.py": {
       "size": 166,
       "mtime": 1764172265
     },
     "index_store\\default__vector_store.json": {
-      "size": 69508,
-      "mtime": 1764178018
+      "size": 69597,
+      "mtime": 1764225216
     },
     "index_store\\docstore.json": {
-      "size": 6864,
-      "mtime": 1764178018
+      "size": 6866,
+      "mtime": 1764225216
     },
     "index_store\\graph_store.json": {
       "size": 18,
-      "mtime": 1764178018
+      "mtime": 1764225216
     },
     "index_store\\image__vector_store.json": {
       "size": 72,
-      "mtime": 1764178018
+      "mtime": 1764225216
     },
     "index_store\\index_store.json": {
       "size": 415,
-      "mtime": 1764178018
+      "mtime": 1764225216
     },
     "rag_storage\\Litter-Study-Summary-Report-May-2021_final_05172021.pdf": {
       "size": 1342391,
@@ -42,12 +42,12 @@
     },
     "__pycache__\\indexer.cpython-311.pyc": {
       "size": 7622,
-      "mtime": 1764174363
+      "mtime": 1764225207
     },
     "__pycache__\\__init__.cpython-311.pyc": {
-      "size": 353,
-      "mtime": 1764173266
+      "size": 354,
+      "mtime": 1764212883
     }
   },
-  "saved_at": 1764178018
+  "saved_at": 1764225216
 }

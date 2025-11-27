@@ -49,8 +49,8 @@ DATA_BASE = Path(
 
 # RAG dirs live under the writable base (NOT inside the repo tree on Cloud)
 RAG_DIR   = DATA_BASE / "rag"
-DOC_DIR   = Path(get_secret("RAG_STORAGE_DIR", str(RAG_DIR / "rag_storage"))).resolve()
-INDEX_DIR = Path(get_secret("INDEX_STORE_DIR",  str(RAG_DIR / "index_store"))).resolve()
+DOC_DIR   = Path(get_secret("RAG_DIR", str(RAG_DIR / "rag_storage"))).resolve()
+INDEX_DIR = Path(get_secret("INDEX_DIR",  str(RAG_DIR / "index_store"))).resolve()
 
 # Where we save annotated images, etc.
 OUTPUT_DIR = Path(os.getenv("OUTPUT_DIR", str(DATA_BASE / "outputs"))).resolve()
