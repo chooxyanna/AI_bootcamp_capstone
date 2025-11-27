@@ -4,6 +4,9 @@ import io
 import json
 import tempfile
 from pathlib import Path
+import streamlit as st
+from app.config import DOC_DIR
+from app.rag.indexer import build_or_load_index
 
 import streamlit as st
 from PIL import Image as PILImage
@@ -68,17 +71,17 @@ def build_user_message(question: str, image_path: str | None):
 
 # --- App UI ------------------------------------------------------------------
 
-st.set_page_config(page_title="RAG + Tools Assistant", page_icon="🤖", layout="wide")
-st.title("🤖 RAG + Tools Assistant (LangGraph + Memory)")
-
-# Keys from environment (on Streamlit Cloud, put them in Secrets)
-openai_ok = bool(os.getenv("OPENAI_API_KEY"))
-tavily_ok = bool(os.getenv("TAVILY_API_KEY"))
-with st.sidebar:
-    st.subheader("Keys")
-    st.write(f"OPENAI_API_KEY found: **{openai_ok}**")
-    st.write(f"TAVILY_API_KEY found: **{tavily_ok}**")
-    st.caption("Set environment variables or Streamlit Secrets for deployment.")
+st.sidebar.header("Upload RAG docs")
+files = st.sidebar.file_uploader(
+    "Upload PDFs/TXTs/DOCX/MD", type=["pdf","txt","md","docx"], accept_multiple_files=True
+)
+if files:
+    doc_dir = Path(DOC_DIR)
+    for f in files:
+        (doc_dir / f.name).write_bytes(f.read())
+    st.sidebar.success(f"Uploaded {len(files)} file(s) to {doc_dir}")
+    # Rebuild the index so the new docs are searchable
+    build_or_load_index(doc_dir=str(doc_dir))
 
 # Initialize graph + memory (once per session)
 if "graph_bundle" not in st.session_state:

@@ -3,22 +3,21 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-# --- always load .env locally; harmless on Streamlit ---
+# Always load .env locally; harmless on Streamlit Cloud
 load_dotenv()
 
-# Try to read from Streamlit secrets when running on Streamlit Cloud
-def _from_secrets(name: str, default: str | None = None) -> str | None:
+def _from_st_secrets(name: str):
     try:
-        import streamlit as st  # present on Cloud
+        import streamlit as st
         if hasattr(st, "secrets") and name in st.secrets:
             return st.secrets[name]
     except Exception:
         pass
-    return default
+    return None
 
 def get_secret(name: str, default: str | None = None) -> str | None:
-    # priority: Streamlit secrets -> env var -> default
-    v = _from_secrets(name)
+    # Priority: Streamlit secrets -> env var -> default
+    v = _from_st_secrets(name)
     if v is not None:
         return v
     return os.getenv(name, default)
@@ -36,25 +35,39 @@ if not OPENAI_API_KEY:
 # ----- PATHS -----
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
-# Choose a writable base dir:
-# - Streamlit Cloud: /mount/data
-# - Local: <repo>/data
-IS_STREAMLIT = "STREAMLIT_RUNTIME" in os.environ
-DEFAULT_DATA_BASE = Path("/mount/data") if IS_STREAMLIT else (REPO_ROOT / "data")
+def _pick_data_base() -> Path:
+    """Choose a writable base dir. Prefer /mount/data on Streamlit Cloud."""
+    candidates = []
+    # 1) explicit override
+    override = get_secret("DATA_BASE", os.getenv("DATA_BASE", "")).strip()
+    if override:
+        candidates.append(Path(override))
+    # 2) Streamlit Cloud default
+    candidates.append(Path("/mount/data"))
+    # 3) local fallback (inside repo)
+    candidates.append(REPO_ROOT / "data")
 
-# Allow override via secrets or env
-DATA_BASE = Path(
-    _from_secrets("DATA_BASE", os.getenv("DATA_BASE", str(DEFAULT_DATA_BASE)))
-).resolve()
+    for p in candidates:
+        try:
+            p.mkdir(parents=True, exist_ok=True)
+            test = p / ".write_test"
+            test.write_text("ok")
+            test.unlink()
+            return p
+        except Exception:
+            continue
+    # last resort
+    return REPO_ROOT / "data"
 
-# RAG dirs live under the writable base (NOT inside the repo tree on Cloud)
+DATA_BASE = _pick_data_base()
+
+# RAG dirs live under the writable base
 RAG_DIR   = DATA_BASE / "rag"
 DOC_DIR   = Path(get_secret("RAG_DIR", str(RAG_DIR / "rag_storage"))).resolve()
 INDEX_DIR = Path(get_secret("INDEX_DIR",  str(RAG_DIR / "index_store"))).resolve()
 
 # Where we save annotated images, etc.
-OUTPUT_DIR = Path(os.getenv("OUTPUT_DIR", str(DATA_BASE / "outputs"))).resolve()
+OUTPUT_DIR = Path(get_secret("OUTPUT_DIR", str(DATA_BASE / "outputs"))).resolve()
 
-# Ensure directories exist (writable on Cloud)
-for p in (RAG_DIR, DOC_DIR, INDEX_DIR, OUTPUT_DIR):
+for p in (DOC_DIR, INDEX_DIR, OUTPUT_DIR):
     p.mkdir(parents=True, exist_ok=True)
