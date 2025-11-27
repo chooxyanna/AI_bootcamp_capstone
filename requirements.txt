@@ -1,4 +1,5 @@
 python-dotenv
+streamlit
 requests
 numpy
 pillow
@@ -13,3 +14,6 @@ typing_extensions
 llama-index-core
 llama-index-llms-openai
 llama-index-tools-tavily-research
+llama-index-embeddings-openai
+openai>=1.52.0
+tiktoken>=0.7.0
