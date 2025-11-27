@@ -1,21 +1,26 @@
 --extra-index-url https://download.pytorch.org/whl/cpu
 
+# Core
 python-dotenv==1.0.1
 requests==2.32.3
 numpy==1.26.4
 pillow==10.4.0
 opencv-python-headless==4.10.0.84
 rapidocr-onnxruntime==1.3.21
+onnxruntime==1.17.3           # <- optional stability pin
 
 # ML
 torch==2.3.1+cpu
 transformers==4.44.2
+safetensors==0.4.4            # transformer dep; pin for reproducibility
 
 # LangChain / LangGraph
 langchain==0.3.7
+langchain-core==0.3.29        # keep in same 0.3.x track as langchain
 langchain-openai==0.2.8
 langgraph==0.2.34
 typing_extensions==4.12.2
+pydantic==2.9.2               # ensure v2 (not v1/v3)
 
 # OpenAI client + tokenizer
 openai==1.52.0
@@ -28,7 +33,7 @@ llama-index-embeddings-openai==0.2.5
 llama-index-tools-tavily-research==0.1.7
 llama-index-readers-file==0.2.2
 
-# PDF support for SimpleDirectoryReader (keeps RAG happy with PDFs)
+# PDF support for SimpleDirectoryReader (PDFs)
 pypdf==4.3.1
 pdfplumber==0.11.0
 
