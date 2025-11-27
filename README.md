@@ -35,8 +35,8 @@ Text-only LLM agent that **always** reads a local **RAG** context first, then de
 - pip install -r requirements.txt (install dependencies)
 
 ## Usage
-Run streamlit on local machine
+Run **with streamlit** on local machine\
 -streamlit run streamlit_app.py
 
-Run on local machine without streamlit
+Run **without streamlit** on local machine\
 -python main.py --question QUESTION [--image IMAGE] **# --question is required**
