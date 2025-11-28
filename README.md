@@ -17,11 +17,11 @@ Text-only LLM agent that **always** reads a local **RAG** context first, then de
 - pip install -r requirements.txt (install dependencies)
 
 ### Usage
-Run **with streamlit** on local machine\
--streamlit run streamlit_app.py
+- Run **with streamlit** on local machine\
+    -streamlit run streamlit_app.py
 
-Run **without streamlit** on local machine\
--python main.py --question QUESTION [--image IMAGE] **# --question is required**
+- Run **without streamlit** on local machine\
+    -python main.py --question QUESTION [--image IMAGE] **# --question is required**
 
 ### Keys
 - Create .env file with\
@@ -29,4 +29,4 @@ Run **without streamlit** on local machine\
     TAVILY_API_KEY=
 
 ### Rag Storage
-Expand the storage by adding files into data/rag/rag_storage
+- Expand the storage by adding files into data/rag/rag_storage
