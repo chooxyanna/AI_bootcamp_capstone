@@ -11,27 +11,31 @@ Text-only LLM agent that **always** reads a local **RAG** context first, then de
 
 
 ### Project Structure
-├─ .env **# Action: put OPENAI_API_KEY, TAVILY_API_KEY here**\
-├─ requirements.txt\
-├─ main.py\
-└─ app/\
-│ ├─ init.py\
-│ ├─ config.py\
-│ ├─ utils.py\
-│ ├─ graph.py\
-│ ├─ rag/\
-│ │ ├─init.py\
-│ │ ├─ indexer.py # build_or_load_index(), QUERY_ENGINE, format_sources()\
-│ ├─ tools/\
-│ │ ├─ init.py\
-│ │ ├─ tavily_tool.py # tavily_search tool\
-│ │ ├─ ocr_tool.py # RapidOCR tool\
-│ └─└─ obj_detect_tool.py # DETR tool (saves annotated image + optional data_url)\
-└─ data/\
-│ ├─ output/\
-│ ├─ rag/\
-│ │ ├─ rag_storage/ **# Action: put your PDFs/TXT/Docs here**\
-└─└─└─ index_store/ # auto-persisted vector index (cached)\
+├─ .env                     # **Action:** add your API keys here (OPENAI_API_KEY, TAVILY_API_KEY)
+├─ requirements.txt          # Python dependencies
+├─ main.py                   # Entry point for the application
+│
+├─ app/
+│  ├─ __init__.py
+│  ├─ config.py              # Configuration and environment setup
+│  ├─ utils.py               # Helper functions
+│  ├─ graph.py               # Defines main workflow graph
+│  │
+│  ├─ rag/
+│  │  ├─ __init__.py
+│  │  ├─ indexer.py          # build_or_load_index(), QUERY_ENGINE, format_sources()
+│  │
+│  ├─ tools/
+│  │  ├─ __init__.py
+│  │  ├─ tavily_tool.py      # Tavily search tool
+│  │  ├─ ocr_tool.py         # RapidOCR tool
+│  │  └─ obj_detect_tool.py  # DETR tool (saves annotated image + optional data_url)
+│
+└─ data/
+   ├─ output/                # Stores processed results or outputs
+   └─ rag/
+      ├─ rag_storage/        # **Action:** place your PDFs/TXT/Docs here
+      └─ index_store/        # Auto-persisted vector index (cached)
 
 # How to use
 
