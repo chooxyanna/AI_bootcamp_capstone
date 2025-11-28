@@ -1,5 +1,5 @@
 # AI Bootcamp Capstone (RAG + Tools)
-
+### About
 Text-only LLM agent that **always** reads a local **RAG** context first, then decides whether to call tools:
 
 > Flow: **RAG → LLM → tools (only if necessary) → Answer**
@@ -10,7 +10,7 @@ Text-only LLM agent that **always** reads a local **RAG** context first, then de
 >- **Web search** (Tavily)
 
 
-## Project Structure
+### Project Structure
 ├─ .env **# Action: put OPENAI_API_KEY, TAVILY_API_KEY here**\
 ├─ requirements.txt\
 ├─ main.py\
@@ -30,13 +30,20 @@ Text-only LLM agent that **always** reads a local **RAG** context first, then de
 ├─ rag_storage/ **# Action: put your PDFs/TXT/Docs here**\
 └─ index_store/ # auto-persisted vector index (cached)\
 
-## Requirements
-- **Python 3.11** (recommended & tested)
+# How to use
+
+### Requirements
+- Create an environment with **Python 3.11** (recommended & tested)
 - pip install -r requirements.txt (install dependencies)
 
-## Usage
+### Usage
 Run **with streamlit** on local machine\
 -streamlit run streamlit_app.py
 
 Run **without streamlit** on local machine\
 -python main.py --question QUESTION [--image IMAGE] **# --question is required**
+
+### Keys
+- Create .env file with\
+    OPENAI_API_KEY=\
+    TAVILY_API_KEY=
