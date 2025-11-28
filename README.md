@@ -15,20 +15,23 @@ Text-only LLM agent that **always** reads a local **RAG** context first, then de
 ├─ requirements.txt\
 ├─ main.py\
 └─ app/\
-├─ init.py\
-├─ config.py\
-├─ utils.py\
-├─ graph.py\
-├─ tools/\
 │ ├─ init.py\
-│ ├─ tavily_tool.py # tavily_search tool\
-│ ├─ ocr_tool.py # RapidOCR tool\
-│ └─ obj_detect_tool.py # DETR tool (saves annotated image + optional data_url)\
-└─ rag/\
-├─ init.py\
-├─ indexer.py # build_or_load_index(), QUERY_ENGINE, format_sources()\
-├─ rag_storage/ **# Action: put your PDFs/TXT/Docs here**\
-└─ index_store/ # auto-persisted vector index (cached)\
+│ ├─ config.py\
+│ ├─ utils.py\
+│ ├─ graph.py\
+│ ├─ rag/\
+│ │ ├─init.py\
+│ │ ├─ indexer.py # build_or_load_index(), QUERY_ENGINE, format_sources()\
+│ ├─ tools/\
+│ │ ├─ init.py\
+│ │ ├─ tavily_tool.py # tavily_search tool\
+│ │ ├─ ocr_tool.py # RapidOCR tool\
+│ └─└─ obj_detect_tool.py # DETR tool (saves annotated image + optional data_url)\
+└─ data/\
+│ ├─ output/\
+│ ├─ rag/\
+│ │ ├─ rag_storage/ **# Action: put your PDFs/TXT/Docs here**\
+└─└─└─ index_store/ # auto-persisted vector index (cached)\
 
 # How to use
 
